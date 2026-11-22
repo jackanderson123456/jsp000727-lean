@@ -161,22 +161,23 @@ theorem normalized_subsequence {a : ℕ → ℕ} (ha : StrictMono a)
     apply ha.monotone
     exact hle i
 
-/-- A quantitative quadratic-growth case of Korsky's Proposition 3.3.
-In particular only finitely many moduli have at most d exceptional terms. -/
-theorem exceptional_divisor_bound {a : ℕ → ℕ} (ha : StrictMono a)
+/-- The translates count needs the quadratic envelope only on a finite prefix. -/
+theorem exceptional_divisor_bound_of_local_growth {a : ℕ → ℕ} (ha : StrictMono a)
     (hpos : ∀ i, 0 < a i) (hf : SubsetSumFree a) {C d : ℕ}
-    (hg : ∀ i, a i ≤ C * (i+1)^2) (hd : 0 < d) (h : FewExceptions a d) :
+    (hg : ∀ i < (4*C+3)*d, a i ≤ C * (i+1)^2) (hd : 0 < d) (h : FewExceptions a d) :
     d ≤ C * (4*C+3)^2 := by
   let b := quotientSeq a d
   obtain ⟨hb, hbpos, hbf, hbound⟩ := normalized_subsequence ha hpos hf hd h
   let T := 4*C+2
-  have hbnd (i : ℕ) : d * b i ≤ C * (i+d+1)^2 :=
-    (hbound i).trans (hg _)
+  have hwidth : (4*C+3)*d = T*d+d := by dsimp [T]; ring
+  have htwo : 2*d ≤ T*d := Nat.mul_le_mul_right d (by dsimp [T]; omega)
+  have hbnd (i : ℕ) (hi : i < T*d) : d * b i ≤ C * (i+d+1)^2 :=
+    (hbound i).trans (hg _ (by omega))
   have hsmall (i : ℕ) (hi : i ∈ range d) : b i ≤ 4*C*d := by
     apply (Nat.le_of_mul_le_mul_left · hd)
     have hir := mem_range.mp hi
     calc
-      d * b i ≤ C * (i+d+1)^2 := hbnd i
+      d * b i ≤ C * (i+d+1)^2 := hbnd i (by omega)
       _ ≤ C * (2*d)^2 := by gcongr; omega
       _ = d * (4*C*d) := by ring
   have hsum : ∑ i ∈ range d, b i ≤ d * (4*C*d) := by
@@ -186,7 +187,7 @@ theorem exceptional_divisor_bound {a : ℕ → ℕ} (ha : StrictMono a)
   have hlarge : b (T*d-1) ≤ C*(T+1)^2*d := by
     apply (Nat.le_of_mul_le_mul_left · hd)
     calc
-      d * b (T*d-1) ≤ C * (T*d-1+d+1)^2 := hbnd _
+      d * b (T*d-1) ≤ C * (T*d-1+d+1)^2 := hbnd _ (by omega)
       _ = C * ((T+1)*d)^2 := by
         rw [show (T+1)*d = T*d+d by ring, show T*d-1+d+1 = T*d+d by omega]
       _ = d * (C*(T+1)^2*d) := by ring
@@ -198,5 +199,13 @@ theorem exceptional_divisor_bound {a : ℕ → ℕ} (ha : StrictMono a)
   rw [hdif] at hcount
   have hprod : d * d ≤ (C*(T+1)^2) * d := by nlinarith
   simpa [T, Nat.add_assoc] using (le_of_mul_le_mul_right hprod hd)
+
+/-- A quantitative quadratic-growth case of Korsky's Proposition 3.3.
+In particular only finitely many moduli have at most d exceptional terms. -/
+theorem exceptional_divisor_bound {a : ℕ → ℕ} (ha : StrictMono a)
+    (hpos : ∀ i, 0 < a i) (hf : SubsetSumFree a) {C d : ℕ}
+    (hg : ∀ i, a i ≤ C * (i+1)^2) (hd : 0 < d) (h : FewExceptions a d) :
+    d ≤ C * (4*C+3)^2 :=
+  exceptional_divisor_bound_of_local_growth ha hpos hf (fun i _ => hg i) hd h
 
 end JSP727

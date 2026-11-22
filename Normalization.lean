@@ -21,19 +21,15 @@ private theorem exception_count_mul (a : ℕ → ℕ) {d : ℕ} (hd : 0 < d) (q 
     · have hbad : ¬ d*q ∣ a n := fun hh => h ((dvd_mul_right d q).trans hh)
       simp [Nat.count_succ, h, hbad, ih, add_assoc, add_comm]
 
-/-- For a sum-free sequence of at most quadratic growth, divide the terms
-that are multiples of a single bounded divisor by that divisor. The resulting
-sequence has finite subset sums in every residue class, for every modulus. -/
-theorem exists_modular_normalization {a : ℕ → ℕ} (ha : StrictMono a)
-    (hpos : ∀ i, 0 < a i) (hf : SubsetSumFree a) {C : ℕ}
-    (hg : ∀ i, a i ≤ C * (i+1)^2) :
+/-- A bounded set of exceptional moduli suffices for the normalization. -/
+theorem modular_normalization_of_bounded_moduli {a : ℕ → ℕ} {U : ℕ}
+    (hbound : ∀ d, 0 < d → FewExceptions a d → d ≤ U) :
     ∃ d, 0 < d ∧ FewExceptions a d ∧ ∀ q, 0 < q → Covers (quotientSeq a d) q := by
   classical
-  let U := C*(4*C+3)^2
   have hone : FewExceptions a 1 := by
     intro n
     simp
-  have hU : 1 ≤ U := exceptional_divisor_bound ha hpos hf hg (by decide) hone
+  have hU : 1 ≤ U := hbound 1 (by decide) hone
   let d := Nat.findGreatest (FewExceptions a) U
   have hd : 0 < d := Nat.le_findGreatest hU hone
   have hgood : FewExceptions a d := Nat.findGreatest_spec hU hone
@@ -50,9 +46,18 @@ theorem exists_modular_normalization {a : ℕ → ℕ} (ha : StrictMono a)
     nlinarith [Nat.zero_le ((d-1)*(e-1)),
       Nat.sub_add_cancel (show 1 ≤ d by omega), Nat.sub_add_cancel (show 1 ≤ e by omega),
       Nat.mul_le_mul (show 1 ≤ d by omega) (show 1 ≤ e-1 by omega)]
-  have hub : d*e ≤ U := exceptional_divisor_bound ha hpos hf hg hdprod hwe
+  have hub : d*e ≤ U := hbound _ hdprod hwe
   have hle : d*e ≤ d := Nat.le_findGreatest hub hwe
   nlinarith
+
+/-- For a sum-free sequence of at most quadratic growth, divide the terms
+that are multiples of a single bounded divisor by that divisor. The resulting
+sequence has finite subset sums in every residue class, for every modulus. -/
+theorem exists_modular_normalization {a : ℕ → ℕ} (ha : StrictMono a)
+    (hpos : ∀ i, 0 < a i) (hf : SubsetSumFree a) {C : ℕ}
+    (hg : ∀ i, a i ≤ C * (i+1)^2) :
+    ∃ d, 0 < d ∧ FewExceptions a d ∧ ∀ q, 0 < q → Covers (quotientSeq a d) q :=
+  modular_normalization_of_bounded_moduli (fun _ hd h => exceptional_divisor_bound ha hpos hf hg hd h)
 
 theorem linear_gap_window {a : ℕ → ℕ} {K : ℕ}
     (hg : ∀ i, a (i+1)-a i ≤ K*(i+1)) {u v : ℕ} (huv : u ≤ v) :

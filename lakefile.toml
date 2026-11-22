@@ -1,5 +1,5 @@
 name = "JSP000727"
-defaultTargets = ["Prize", "LogGaps"]
+defaultTargets = ["Prize", "LogGaps", "IntegralCriterion"]
 
 [[require]]
 name = "mathlib"
@@ -56,3 +56,42 @@ name = "Construction"
 
 [[lean_lib]]
 name = "LogGaps"
+
+[[lean_lib]]
+name = "PrefixScarcity"
+
+[[lean_lib]]
+name = "ApproximationWindow"
+
+[[lean_lib]]
+name = "PhasePacking"
+
+[[lean_lib]]
+name = "BlockMass"
+
+[[lean_lib]]
+name = "Scales"
+
+[[lean_lib]]
+name = "Divergence"
+
+[[lean_lib]]
+name = "GapBounds"
+
+[[lean_lib]]
+name = "SubpowerSums"
+
+[[lean_lib]]
+name = "GeneralGaps"
+
+[[lean_lib]]
+name = "GapCriterion"
+
+[[lean_lib]]
+name = "IntegralTest"
+
+[[lean_lib]]
+name = "SlowFactor"
+
+[[lean_lib]]
+name = "IntegralCriterion"

@@ -36,8 +36,8 @@ private theorem large_approximant {θ : ℝ} (hirr : Irrational θ) (D : ℕ) :
   refine ⟨(q.num, q.den), ?_, q.num_div_den⟩
   simpa [s, abs_le] using And.intro (abs_le.mp hi) (show q.den < D+1 by omega)
 
-private theorem rational_spacing (q : ℚ) {h : ℕ} (hh : 0 < h)
-    (hsmall : h < q.den) (z : ℤ) :
+theorem nonmultiple_rational_spacing (q : ℚ) {h : ℕ}
+    (hnd : ¬ q.den ∣ h) (z : ℤ) :
     1 ≤ |(h : ℝ) * q - z| * q.den := by
   have hne : (h : ℤ)*q.num - z*q.den ≠ 0 := by
     intro hz
@@ -46,7 +46,7 @@ private theorem rational_spacing (q : ℚ) {h : ℕ} (hh : 0 < h)
     have hnat : q.den ∣ h := by
       have h' := Int.natAbs_dvd_natAbs.mpr hdiv
       exact q.reduced.symm.dvd_of_dvd_mul_right (by simpa [Int.natAbs_mul] using h')
-    exact hsmall.not_ge (Nat.le_of_dvd hh hnat)
+    exact hnd hnat
   have hi := Int.one_le_abs hne
   have heq : (q : ℝ) * q.den = q.num := by rw [Rat.cast_def]; field_simp
   calc
@@ -85,7 +85,8 @@ private theorem adjacent_phases {θ : ℝ} {q : ℚ}
       _ = |((y:ℝ)*θ-(round (y*θ) : ℝ))-((x:ℝ)*θ-(round (x*θ) : ℝ))| := by congr 1; ring
       _ ≤ _ := abs_sub _ _
   have hsep : 1/(q.den : ℝ) ≤ |(h : ℝ)*q-z| :=
-    (div_le_iff₀ hd).mpr (rational_spacing q hh hhd z)
+    (div_le_iff₀ hd).mpr (nonmultiple_rational_spacing q
+      (fun hdiv => hhd.not_ge (Nat.le_of_dvd hh hdiv)) z)
   linarith [show 1/(q.den : ℝ) = 2*(1/(2*(q.den : ℝ))) by field_simp]
 
 /-- A sequence with linear gaps has divergent nearest-integer distances at
