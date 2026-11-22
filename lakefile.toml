@@ -1,0 +1,58 @@
+name = "JSP000727"
+defaultTargets = ["Prize", "LogGaps"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "fabf563a7c95a166b8d7b6efca11c8b4dc9d911f"
+
+[[require]]
+name = "Research"
+git = "https://github.com/williamjblair/lean-proofs.git"
+rev = "4f915a323443bfb1709a6805a013812016dca88a"
+subDir = "starfleet/erdos-254"
+
+[[lean_lib]]
+name = "SubsetSumFree"
+
+[[lean_lib]]
+name = "Residues"
+
+[[lean_lib]]
+name = "Phase"
+
+[[lean_lib]]
+name = "Normalization"
+
+[[lean_lib]]
+name = "Denominators"
+
+[[lean_lib]]
+name = "Torus"
+
+[[lean_lib]]
+name = "Blocks"
+
+[[lean_lib]]
+name = "SequenceSets"
+
+[[lean_lib]]
+name = "Completeness"
+
+[[lean_lib]]
+name = "Supports"
+
+[[lean_lib]]
+name = "LinearGaps"
+
+[[lean_lib]]
+name = "Prize"
+
+[[lean_lib]]
+name = "Rotation"
+
+[[lean_lib]]
+name = "Construction"
+
+[[lean_lib]]
+name = "LogGaps"

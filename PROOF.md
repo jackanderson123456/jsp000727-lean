@@ -1,0 +1,50 @@
+# Consecutive gaps in subset-sum-free sequences
+
+Let $a_0<a_1<\cdots$ be positive integers. Assume no $a_n$ is the sum of a finite set of distinct earlier terms. Write $\Delta_n=a_n-a_{n-1}$ for $n\ge1$. We prove the following results.
+
+1. For every positive integer $K$ there are arbitrarily large $n$ with $\Delta_n>Kn$. In particular, Erdős's proposed eventual inequality $\Delta_n<n$ is impossible.
+2. For every nondecreasing positive integer sequence $g$ with $\sum 1/g(n)<\infty$, there is such a sequence $a$ and a constant $C$ with $g(n-1)/8\le\Delta_n\le Cg(n)$ for all $n\ge1$.
+
+The unbounded gap ratio was claimed by L. Price in July 2026. S. Korsky's September 2026 manuscript gives a stronger integral criterion for slowly varying factors. Our proof uses Korsky's divisor normalization, a direct Dirichlet approximation argument for linear gaps, and Will Blair's formalization of ingredients in the completeness theorem. The construction below uses one changing interval per term. [Original problem](https://www.erdosproblems.com/876) · [Proof claims](https://www.erdosproblems.com/forum/thread/876/proof-claims) · [Korsky manuscript](https://drive.google.com/file/d/1kf9KetNCVaWtnFQvcp-odO3Zkf9eiDF1/view) · [Blair's dependency at the pinned revision](https://github.com/williamjblair/lean-proofs/tree/4f915a323443bfb1709a6805a013812016dca88a/starfleet/erdos-254)
+
+## The divisor normalization
+
+Suppose $a_i\le C(i+1)^2$. For $r<n$, translate $\{a_r,\ldots,a_{n-1}\}$ by each of the $r+1$ prefix sums of lengths $0,\ldots,r$. These translates are disjoint. A collision between translates of different lengths would express the larger of two tail terms as the smaller tail term plus a nonempty interval of earlier terms. This gives
+
+$$
+(r+1)(n-r)\le a_{n-1}+\sum_{i<r}a_i.
+$$
+
+If at most $d$ terms are not divisible by $d$, enumerate the divisible terms divided by $d$ as $b_i$. The index of the $i$th retained term lies between $i$ and $i+d$. The sequence $b$ is still subset-sum-free and $d b_i\le C(i+d+1)^2$. Set $T=4C+2$ and apply the counting inequality with $r=d$, $n=Td$. For $i<d$, $b_i\le4Cd$, and $b_{Td-1}\le C(T+1)^2d$. Substitution gives $d\le C(4C+3)^2$.
+
+Choose the greatest positive $D$ with at most $D$ exceptions. It exists by the bound and $1$ is a candidate. The finite subset sums of $b_i=a_{f(i)}/D$ represent every residue modulo every positive integer. To see this, suppose $e$ is the least positive modulus with a missing residue for $b$. The set of prefix subset sums modulo $e$ starts with the singleton zero and always has at most $e-1$ members. Adjoining a term $c$ indivisible by $e$ must increase its size. Otherwise the old prefix subset sums would be stable under translation by $c$. The same stability passes to the entire sequence by keeping all summands outside the prefix fixed. Iteration gives stability under every multiple of $c$ modulo $e$. Put $h=\gcd(c,e)<e$. All residues modulo $h$ are represented by minimality, and multiples of $c$ span the multiples of $h$ modulo $e$ by Bézout's identity. This would cover all residues modulo $e$. Consequently there are at most $e-2$ exceptions to divisibility by $e$ in $b$. There are then at most $D+e-2\le De$ exceptions to divisibility by $De$ in $a$, contradicting maximality.
+
+## Divergence at irrational phases
+
+Write $\|x\|$ for the distance from $x$ to the nearest integer. Suppose $a_{i+1}-a_i\le K(i+1)$. We prove that $\sum_i\|a_i\theta\|$ diverges for every irrational $\theta$. Dirichlet approximation gives reduced rationals $p/q$ with unbounded denominators and $|\theta-p/q|<1/q^2$. If $1\le h\le q/2$, then $hp$ is nonzero modulo $q$. Thus its distance after division by $q$ from every integer is at least $1/q$, and $\|h\theta\|\ge1/(2q)$.
+
+Put $N=\lfloor q/(8K)\rfloor$. For $N\le i<2N$ all consecutive differences are at most $q/2$. The triangle inequality gives $\|a_i\theta\|+\|a_{i+1}\theta\|\ge1/(2q)$. The mass on $[N,2N]$ is at least $N/(4q)$, bounded below by a positive constant depending only on $K$ for all sufficiently large $q$. This contradicts summability. The property persists after keeping a fixed arithmetic progression of indices. It also holds for the normalized sequence above, since $i\le f(i)\le i+D$ bounds the number of original gaps between consecutive retained terms by $D+1$.
+
+## Completeness and the reserved summands
+
+We use the following four-set criterion. Let $B_0,B_1,B_2,C$ be pairwise disjoint sets of positive integers. Suppose the distinct subset sums of each $B_i$ have bounded gaps, the subset sums of $C$ represent every residue modulo every positive integer, and $\sum_{n\in C}\|n\theta\|$ diverges for every irrational $\theta$. Then every sufficiently large integer is representable by a finite subset of their union. [Bergelson and Simmons, Main Theorem 2.1](https://arxiv.org/abs/1507.02208)
+
+Our formal proof obtains the criterion from the Bergelson–Furstenberg–Weiss theorem for the first two sets and compact-group correction for the third and fourth. Here is the step needed when only irrational phases diverge. For a finite torus rotation vector $\alpha$, take the intersection $H$ of the closures of all tail subset-sum sets of $n\alpha$ with $n\in C$. This is a closed subgroup, since disjoint tails give closure under addition and the torus is compact. There is a positive $D$ clearing the denominators of all rational values of the linear combinations $\sum k_i\alpha_i$ with integer $k_i$. Indeed, choose a rational-linear map $\mathbb R\to\mathbb Q$ taking $1$ to $1$ and clear the denominators of the images of the finitely many coordinates.
+
+If $D\alpha\notin H$, a torus character annihilates $H$ and is nonzero on $D\alpha$. Its scalar phase $\phi=\sum k_i\alpha_i$ must therefore be irrational. Divergence at $\phi$ gives a nonzero scalar tail limit by the scalar escape lemma. This point lifts to a torus tail limit by compactness, contradicting annihilation of $H$. It follows that $D\alpha\in H$. For every integer $z$, choose a finite correction sum $u\equiv z\pmod D$. The point $(z-u)\alpha$ belongs to $H$. Approximate it by subset sums from beyond the largest term used for $u$. The combined sum approximates $z\alpha$, with no repeated term. Hence the closure of all subset sums contains the closed group generated by $\alpha$. This supplies the correction hypothesis in Blair's formal piecewise-Bohr completeness argument. [Scalar escape](https://github.com/williamjblair/lean-proofs/blob/4f915a323443bfb1709a6805a013812016dca88a/starfleet/erdos-254/Research/CircleEscape.lean) · [Completeness assembly](https://github.com/williamjblair/lean-proofs/blob/4f915a323443bfb1709a6805a013812016dca88a/starfleet/erdos-254/Research/ConditionalBohrCriterion.lean)
+
+Assume now that the gaps of $a$ are eventually bounded by a fixed multiple of $n$. Enlarge the constant to cover the finite initial segment. Summing the bound gives quadratic growth. Apply divisor normalization to $a_0,a_2,a_4,\ldots$, and take $C$ to be its normalized set. It satisfies both correction conditions above. Divide the odd-indexed terms into successive bins of $D^2$ terms. Each bin contains $D$ terms in a common residue class modulo $D$. Let $v_k$ be their sum divided by $D$. These averages lie within their respective bins, so they are positive and strictly increasing. Reserve bin zero. Put the subsequent averages in $B_0,B_1,B_2$ cyclically. Each of these three sequences has linear gaps, since averages three bins apart are separated by at most a fixed number of original gaps.
+
+An increasing positive sequence $b$ with $b_{j+1}-b_j\le L(j+1)$ satisfies $b_j\le H+\sum_{i<j}b_i$ for an absolute-in-$j$ constant $H$. Indeed $b_i\ge i$, and $\sum_{i<j}b_i\ge L(j-L)$ for $j\ge L$. Applying this estimate to the terms before $b_j$ pays for the next gap up to a constant. The elementary coin-cover lemma then gives bounded gaps between subset sums. An average cannot equal a member of $C$, since multiplication by $D$ would express an even-indexed term as a sum using only odd-indexed terms. In a strictly increasing positive subset-sum-free sequence the only representation of one of its terms is its singleton.
+
+Choose $b\in C$ so large that $b-v_0$ is representable by the four-set criterion. Multiply by $D$. Replace each chosen average by its original odd-indexed terms and each member of $C$ by its original even-indexed term. Adjoin the terms reserved in bin zero. All supports are disjoint. This represents the original even-indexed term $Db$ using at least one odd-indexed term, a contradiction.
+
+## Construction with small gaps
+
+The rotation by $\sqrt2$ has two elementary bounds. First, $1\le4q|q\sqrt2-z|$ for $q\ge1$ and $z\in\mathbb Z$. When $|q\sqrt2-z|<1$, the nonzero integer $2q^2-z^2$ has absolute value at least one and $|q\sqrt2+z|\le4q$. The other case is immediate.
+
+Second, starting at any integer $s$, a point in the next $32D$ steps has fractional part in $(1/D,2/D)$ after multiplication by $\sqrt2$, for $D\ge3$. Dirichlet gives $p/q$ with $q\le32D$ and $|q\sqrt2-p|\le1/(32D+1)$. The first bound forces $q>8D$. Choose $J=\lfloor q(3/(2D)-s\sqrt2)\rfloor$ and the unique $0\le k<q$ with $kp\equiv J\pmod q$. Modulo an integer, $(s+k)\sqrt2$ differs from $3/(2D)$ by at most $2/q<1/(2D)$, as required.
+
+Scale $g(n)$ by a single integer to obtain $D_n\ge3$ with $\sum_n2/D_n<1$. Starting at 1 and thereafter one past the preceding term, choose $a_n$ with fractional part in $(1/D_n,2/D_n)$. This gives $\Delta_n\le33D_n$. All finite sums of these fractional parts are less than 1. If $a_n$ were a sum of at least two earlier terms, its fractional part would therefore equal their sum. Each earlier fractional part exceeds $1/D_n$ by monotonicity, so their sum would exceed $2/D_n$. Empty and singleton sums are excluded by positivity and strict increase.
+
+Finally, the difference of the fractional parts of two consecutive terms has absolute value at most $2/D_{n-1}$. Applying the first rotation bound to $q=\Delta_n$ and the difference of the corresponding floors gives $D_{n-1}\le8\Delta_n$. This proves the claimed lower bound as well.
